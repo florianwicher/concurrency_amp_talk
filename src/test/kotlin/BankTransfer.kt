@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
 import kotlin.concurrent.Volatile
@@ -25,8 +24,8 @@ private class BankAccount(
         return false
     }
 
-    fun transfer(amount: Int, to: BankAccount) {
-        if (withdraw(amount)) to.deposit(amount)
+    fun transfer(amount: Int, toAccount: BankAccount) {
+        if (withdraw(amount)) toAccount.deposit(amount)
     }
 }
 
