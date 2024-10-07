@@ -2,12 +2,12 @@ import org.junit.jupiter.api.Test
 import kotlin.random.Random.Default.nextBoolean
 import kotlin.random.Random.Default.nextInt
 
-interface TwoValueCache<K, V> {
+interface OneValueCache<K, V> {
     fun get(key: K): V?
     fun put(key: K, value: V)
 }
 
-class LockBasedTwoValueCache<K, V> : TwoValueCache<K, V> {
+class LockBasedOneValueCache<K, V> : OneValueCache<K, V> {
     private var key: K? = null
     private var value: V? = null
 
@@ -21,7 +21,7 @@ class LockBasedTwoValueCache<K, V> : TwoValueCache<K, V> {
     }
 }
 
-class ImmutableObjectTwoValueCache<K, V> : TwoValueCache<K, V> {
+class ImmutableObjectOneValueCache<K, V> : OneValueCache<K, V> {
 
     data class KeyValuePair<K, V>(val key: K, val value: V)
 
@@ -38,11 +38,11 @@ class ImmutableObjectTwoValueCache<K, V> : TwoValueCache<K, V> {
     }
 }
 
-class TwoValueCacheTest {
+class OneValueCacheTest {
 
     @Test
     fun `compare locks and volatile objects`() {
-        setOf<TwoValueCache<Int, String>>(LockBasedTwoValueCache(), ImmutableObjectTwoValueCache()).forEach {
+        setOf<OneValueCache<Int, String>>(LockBasedOneValueCache(), ImmutableObjectOneValueCache()).forEach {
             val blaster = blast {
                 val j = nextInt()
                 if (nextBoolean()) {
