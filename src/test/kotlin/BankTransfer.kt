@@ -26,11 +26,7 @@ private class BankAccount(
     }
 
     fun transfer(amount: Int, to: BankAccount) {
-        synchronized(this) {
-            synchronized(to) {
-                if (withdraw(amount)) to.deposit(amount)
-            }
-        }
+        if (withdraw(amount)) to.deposit(amount)
     }
 }
 
