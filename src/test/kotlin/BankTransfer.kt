@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
 import kotlin.concurrent.Volatile
@@ -60,6 +61,7 @@ class BankTransferTest {
     }
 
     @Test
+    @Timeout(1)
     fun `money supply is conserved after a bunch of transfers`() {
         fun randomAmount() = (1..1000).random()
 
