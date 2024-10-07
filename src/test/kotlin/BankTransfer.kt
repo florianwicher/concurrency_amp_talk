@@ -41,11 +41,11 @@ class BankTransferTest {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
-        val transferer = untilInterrupted {
+        val transferer = forever {
             account.transfer(1, account)
         }
 
-        val auditer = untilInterrupted {
+        val auditer = forever {
             try {
                 assertEquals(100, account.balance)
             } catch (e: AssertionFailedError) {
@@ -79,7 +79,7 @@ class BankTransferTest {
         assertEquals(moneyInCirculationBefore, moneyInCirculationAfter)
     }
 
-    private fun untilInterrupted(block: (Thread) -> Unit) = object : Thread() {
+    private fun forever(block: (Thread) -> Unit) = object : Thread() {
         override fun run() {
             while (!interrupted()) block(this)
         }
