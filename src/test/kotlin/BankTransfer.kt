@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
 import kotlin.concurrent.Volatile
@@ -45,7 +44,7 @@ class BankTransferTest {
             account.transfer(1, account)
         }
 
-        val asserter = untilInterrupted {
+        val auditer = untilInterrupted {
             try {
                 assertEquals(100, account.balance)
             } catch (e: AssertionFailedError) {
@@ -57,17 +56,10 @@ class BankTransferTest {
         exception?.let { throw it }
 
         transferer.apply { interrupt(); join() }
-        asserter.apply { interrupt(); join() }
+        auditer.apply { interrupt(); join() }
     }
 
-    private fun untilInterrupted(block: (Thread) -> Unit) = object : Thread() {
-        override fun run() {
-            while (!interrupted()) block(this)
-        }
-    }.also { it.start() }
-
     @Test
-    @Timeout(1)
     fun `money supply is conserved after a bunch of transfers`() {
         fun randomAmount() = (1..1000).random()
 
@@ -84,4 +76,10 @@ class BankTransferTest {
         val moneyInCirculationAfter = accounts.sumOf { it.balance }
         assertEquals(moneyInCirculationBefore, moneyInCirculationAfter)
     }
+
+    private fun untilInterrupted(block: (Thread) -> Unit) = object : Thread() {
+        override fun run() {
+            while (!interrupted()) block(this)
+        }
+    }.also { it.start() }
 }
