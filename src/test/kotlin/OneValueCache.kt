@@ -55,7 +55,7 @@ class OneValueCacheTest {
                     }
                 }
             }
-            println("${it.javaClass.simpleName}: ${blaster.duration.inWholeMilliseconds} ms")
+            println("${it::class.simpleName}: ${blaster.duration.inWholeMilliseconds} ms")
         }
     }
 }
