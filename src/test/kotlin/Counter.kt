@@ -1,22 +1,30 @@
 import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.roundToInt
+import kotlin.time.times
 
 class Counter {
     @Volatile
+    @get:Synchronized
     var count = 0
+
+    @Synchronized
     fun increment() {
         count++
     }
 }
 
 class OptimisticCounter {
-    private var count = AtomicInteger(0)
+    private var _count = AtomicInteger(0)
+
+    @get:Synchronized
+    val count get() = _count.get()
 
     fun increment() {
         while (true) {
-            val currentCount = count.get()
+            val currentCount = _count.get()
             val newCount = currentCount + 1
-            if (count.compareAndSet(currentCount, newCount)) return
+            if (_count.compareAndSet(currentCount, newCount)) return
         }
     }
 }
@@ -47,7 +55,10 @@ class CounterTest {
         val optimisticCounter = OptimisticCounter()
 
         val threadCount = 1
-        val iterations = 100_000
+        val iterations = 10_000_000
+
+        // prevent biased locking optimization
+        pessimisticCounter.count
 
         val pessimisticBlaster = blast(threadCount, iterations) {
             pessimisticCounter.increment()
@@ -57,9 +68,15 @@ class CounterTest {
             optimisticCounter.increment()
         }
 
+        val fasterImplBlaster = if (pessimisticBlaster.duration < optimisticBlaster.duration) pessimisticBlaster else optimisticBlaster
+        val slowerImpl = if (pessimisticBlaster.duration < optimisticBlaster.duration) optimisticBlaster else pessimisticBlaster
+        val percentFaster = (100 * (slowerImpl.duration - fasterImplBlaster.duration) / slowerImpl.duration).roundToInt()
+        val fasterImpl = if(fasterImplBlaster == pessimisticBlaster) "Pessimistic counter" else "Optimistic counter"
+
         println(
-            """Regular counter: ${pessimisticBlaster.duration}
-              |Optimistic counter: ${optimisticBlaster.duration}""".trimMargin()
+            """Pessimistic counter: ${pessimisticBlaster.duration}
+              |Optimistic counter: ${optimisticBlaster.duration}
+              |$fasterImpl is $percentFaster% faster""".trimMargin()
         )
     }
 }
