@@ -64,7 +64,7 @@ class BankTransferTest {
         val accounts = List(2) { BankAccount(it, randomAmount()) }
         val moneyInCirculationBefore = accounts.sumOf { it.balance }
 
-        blast(threads = 1) {
+        blast(threadCount = 1) {
             val from = accounts.random()
             val to = accounts.random()
             val amount = randomAmount()

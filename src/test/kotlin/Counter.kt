@@ -35,9 +35,9 @@ class CounterTest {
     fun `counter should count the number increment was called`() {
         val counter = Counter()
 
-        val blaster = blast(threads = 1) { counter.increment() }
+        val blaster = blast(threadCount = 1, iterationsPerThread = 100_000) { counter.increment() }
 
-        val timesIncrementWasCalled = blaster.numThreads * blaster.numIterations
+        val timesIncrementWasCalled = blaster.threadCount * blaster.iterationsPerThread
         val actualCount = counter.count
 
         println(

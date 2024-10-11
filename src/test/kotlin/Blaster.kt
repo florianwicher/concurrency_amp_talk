@@ -3,8 +3,8 @@ import kotlin.time.Duration
 import kotlin.time.measureTime
 
 class Blaster(
-    val numThreads: Int,
-    val numIterations: Int,
+    val threadCount: Int,
+    val iterationsPerThread: Int,
     val workload: () -> Unit
 ) {
 
@@ -16,14 +16,14 @@ class Blaster(
     fun run(): Blaster {
         if(hasAlreadyRun) throw IllegalStateException("Blaster can only be run once")
         val threads = mutableListOf<Thread>()
-        val allThreadsReady = CountDownLatch(numThreads)
+        val allThreadsReady = CountDownLatch(this.threadCount)
         val startWorking = CountDownLatch(1)
 
-        repeat(numThreads) {
+        repeat(this.threadCount) {
             threads.add(Thread {
                 allThreadsReady.countDown()
                 startWorking.await()
-                repeat(numIterations) { workload() }
+                repeat(iterationsPerThread) { workload() }
             }.also { it.start() })
         }
         _duration = measureTime {
@@ -35,5 +35,5 @@ class Blaster(
     }
 }
 
-fun blast(threads: Int = 100, iterationsPerThread: Int = 100_000,
-          workload: () -> Unit) = Blaster(threads, iterationsPerThread) { workload() }.also { it.run() }
+fun blast(threadCount: Int = 100, iterationsPerThread: Int = 100_000,
+          workload: () -> Unit) = Blaster(threadCount, iterationsPerThread) { workload() }.also { it.run() }

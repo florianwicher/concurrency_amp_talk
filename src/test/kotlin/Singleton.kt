@@ -24,7 +24,7 @@ class SingletonTest {
     @Test
     fun `singleton should only exist once`() {
         val singletons = synchronizedSet(HashSet<Singleton>())
-        blast(threads = 1) {
+        blast(threadCount = 1) {
             singletons += Singleton.getInstance()
         }
 
