@@ -5,7 +5,6 @@ import kotlin.time.times
 
 class Counter {
     @Volatile
-    @get:Synchronized
     var count = 0
 
     @Synchronized
@@ -35,7 +34,7 @@ class CounterTest {
     fun `counter should count the number increment was called`() {
         val counter = Counter()
 
-        val blaster = blast(threadCount = 1, iterationsPerThread = 100_000) { counter.increment() }
+        val blaster = blast(threadCount = 2, iterationsPerThread = 100_000) { counter.increment() }
 
         val timesIncrementWasCalled = blaster.threadCount * blaster.iterationsPerThread
         val actualCount = counter.count
@@ -68,10 +67,13 @@ class CounterTest {
             optimisticCounter.increment()
         }
 
-        val fasterImplBlaster = if (pessimisticBlaster.duration < optimisticBlaster.duration) pessimisticBlaster else optimisticBlaster
-        val slowerImpl = if (pessimisticBlaster.duration < optimisticBlaster.duration) optimisticBlaster else pessimisticBlaster
-        val percentFaster = (100 * (slowerImpl.duration - fasterImplBlaster.duration) / slowerImpl.duration).roundToInt()
-        val fasterImpl = if(fasterImplBlaster == pessimisticBlaster) "Pessimistic counter" else "Optimistic counter"
+        val fasterImplBlaster =
+            if (pessimisticBlaster.duration < optimisticBlaster.duration) pessimisticBlaster else optimisticBlaster
+        val slowerImpl =
+            if (pessimisticBlaster.duration < optimisticBlaster.duration) optimisticBlaster else pessimisticBlaster
+        val percentFaster =
+            (100 * (slowerImpl.duration - fasterImplBlaster.duration) / slowerImpl.duration).roundToInt()
+        val fasterImpl = if (fasterImplBlaster == pessimisticBlaster) "Pessimistic counter" else "Optimistic counter"
 
         println(
             """Pessimistic counter: ${pessimisticBlaster.duration}
