@@ -21,12 +21,12 @@ class LockBasedOneValueCache<K, V> : OneValueCache<K, V> {
     }
 }
 
-class ImmutableObjectOneValueCache<K, V> : OneValueCache<K, V> {
+class RcuOneValueCache<K, V> : OneValueCache<K, V> {
 
-    data class KeyValuePair<K, V>(val key: K, val value: V)
+    data class Pair<K, V>(val key: K, val value: V)
 
     @Volatile
-    private var pair: KeyValuePair<K, V>? = null
+    private var pair: Pair<K, V>? = null
 
     override fun get(key: K): V? {
         val currentPair = pair
@@ -34,7 +34,7 @@ class ImmutableObjectOneValueCache<K, V> : OneValueCache<K, V> {
     }
 
     override fun put(key: K, value: V) {
-        pair = KeyValuePair(key, value)
+        pair = Pair(key, value)
     }
 }
 
@@ -42,15 +42,12 @@ class OneValueCacheTest {
 
     @Test
     fun `compare locks and volatile objects`() {
-        setOf<OneValueCache<Int, String>>(LockBasedOneValueCache(), ImmutableObjectOneValueCache()).forEach {
+        setOf<OneValueCache<Int, Int>>(LockBasedOneValueCache(), RcuOneValueCache()).map {
             val blaster = blast {
-                val j = nextInt()
                 if (nextBoolean()) {
-                    val value = "Value-$j"
-                    it.put(j, value)
+                    it.put(nextInt(), nextInt())
                 } else {
-                    it.get(j)
-                    if (it.get(j) == "asdf") {
+                    if (it.get(nextInt()) != null) {
                         println("This is just dummy-use of the value to avoid compiler optimization")
                     }
                 }
