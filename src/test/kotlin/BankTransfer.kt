@@ -58,7 +58,7 @@ class BankTransferTest {
 
     @Test
     @Timeout(1)
-    fun `money supply is conserved after a bunch of transfers`() {
+    fun `money supply is conserved after a bunch of transfers between a set of accounts`() {
         fun randomAmount() = (1..1000).random()
 
         val accounts = List(2) { BankAccount(it, randomAmount()) }
