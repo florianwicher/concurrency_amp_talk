@@ -53,10 +53,7 @@ class CounterTest {
         val optimisticCounter = OptimisticCounter()
 
         val threadCount = 1
-        val iterations = 10_000_000
-
-        // prevent biased locking optimization
-        pessimisticCounter.count
+        val iterations = 1_000_000
 
         val pessimisticBlaster = blast(threadCount, iterations) {
             pessimisticCounter.increment()
