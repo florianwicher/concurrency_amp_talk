@@ -4,7 +4,7 @@ import kotlin.math.roundToInt
 import kotlin.time.times
 
 class Counter {
-    @Volatile
+
     var count = 0
 
     fun increment() {
