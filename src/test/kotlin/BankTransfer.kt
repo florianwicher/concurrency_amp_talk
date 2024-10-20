@@ -81,3 +81,10 @@ class BankTransferTest {
         }
     }.also { it.start() }
 }
+
+//val (smaller, larger) = kotlin.collections.listOf(this, toAccount).sortedBy { it.accountNumber }
+//synchronized(smaller) {
+//    synchronized(larger) {
+//        if (withdraw(amount)) toAccount.deposit(amount)
+//    }
+//}
