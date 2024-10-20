@@ -3,11 +3,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
-import kotlin.concurrent.Volatile
 
 private class BankAccount(
     val accountNumber: Int,
-    @Volatile private var _balance: Int
+    private var _balance: Int
 ) {
     val balance get() = _balance
 
