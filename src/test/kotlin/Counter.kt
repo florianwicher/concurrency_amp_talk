@@ -12,7 +12,7 @@ class Counter {
 class CounterTest {
 
     @Test
-    fun `counter should count the number increment was called`() {
+    fun `counter should count the number of times increment was called`() {
         val counter = Counter()
 
         val blaster = blast(threadCount = 3, iterationsPerThread = 100_000) { counter.increment() }
