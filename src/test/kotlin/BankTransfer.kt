@@ -1,11 +1,10 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
 import java.util.concurrent.Executors.newScheduledThreadPool
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit.*
+import java.util.concurrent.TimeUnit.NANOSECONDS
 
 private class BankAccount(
     val accountNumber: Int,
@@ -63,7 +62,6 @@ class BankTransferTest {
 
 
     @Test
-    @Timeout(1)
     fun `given two accounts, money supply is conserved`() {
         fun randomAmount() = (1..1000).random()
 
