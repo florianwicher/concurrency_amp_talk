@@ -3,6 +3,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
+import java.util.concurrent.Executors.newScheduledThreadPool
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit.*
 
 private class BankAccount(
     val accountNumber: Int,
@@ -32,15 +35,15 @@ private class BankAccount(
 class BankTransferTest {
 
     @Test
-    fun `money supply is conserved while transfer is in progress`() {
+    fun `money supply is conserved`() {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
-        val transferer = forever {
+        fun transferer() {
             account.transfer(1, account)
         }
 
-        val auditer = forever {
+        fun auditer() {
             try {
                 assertEquals(100, account.balance)
             } catch (e: AssertionFailedError) {
@@ -48,12 +51,15 @@ class BankTransferTest {
             }
         }
 
+        newScheduledThreadPool(1).apply {
+            forever(::auditer)
+            forever(::transferer)
+        }
+
         sleep(100)
         exception?.let { throw it }
-
-        transferer.apply { interrupt(); join() }
-        auditer.apply { interrupt(); join() }
     }
+
 
     @Test
     @Timeout(1)
@@ -74,11 +80,9 @@ class BankTransferTest {
         assertEquals(moneyInCirculationBefore, moneyInCirculationAfter)
     }
 
-    private fun forever(block: (Thread) -> Unit) = object : Thread() {
-        override fun run() {
-            while (!interrupted()) block(this)
-        }
-    }.also { it.start() }
+
+    fun ScheduledExecutorService.forever(block: () -> Unit) = scheduleAtFixedRate(block, 0, 1, NANOSECONDS)
+
 }
 
 //val (smaller, larger) = kotlin.collections.listOf(this, toAccount).sortedBy { it.accountNumber }
