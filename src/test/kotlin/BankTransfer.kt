@@ -29,7 +29,7 @@ private class BankAccount(
     }
 
     fun transfer(amount: Int, toAccount: BankAccount) {
-                if (withdraw(amount)) toAccount.deposit(amount)
+        if (withdraw(amount)) toAccount.deposit(amount)
     }
 }
 
