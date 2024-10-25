@@ -10,16 +10,15 @@ private class BankAccount(
     val accountNumber: Int,
     private var _balance: Int
 ) {
-    @get:Synchronized
-    val balance get() = _balance
 
-    @Synchronized
-    fun deposit(amount: Int) {
+    val balance
+        get() = synchronized(this) { _balance }
+
+    fun deposit(amount: Int) = synchronized(this) {
         _balance += amount
     }
 
-    @Synchronized
-    fun withdraw(amount: Int): Boolean {
+    fun withdraw(amount: Int): Boolean = synchronized(this) {
         if (_balance >= amount) {
             _balance -= amount
             return true
@@ -81,7 +80,7 @@ class BankTransferTest {
 
 }
 
-//val (smaller, larger) = kotlin.collections.listOf(this, toAccount).sortedBy { it.accountNumber }
+//val (smaller, larger) = listOf(this, toAccount).sortedBy { it.accountNumber }
 //synchronized(smaller) {
 //    synchronized(larger) {
 //        if (withdraw(amount)) toAccount.deposit(amount)
