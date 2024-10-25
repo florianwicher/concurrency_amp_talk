@@ -12,7 +12,6 @@ class BankAccount(
     val accountNumber: Int,
     private var _balance: Int
 ) {
-
     val balance
         get() = synchronized(this) { _balance }
 

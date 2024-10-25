@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Test
 
 class Counter {
-
     var count = 0
         get() {
             return field
