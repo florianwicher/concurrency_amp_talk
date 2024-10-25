@@ -48,7 +48,7 @@ class BankTransferTest {
             exception = e
         }
 
-        newScheduledThreadPool(2).apply {
+        newScheduledThreadPool(1).apply {
             forever(::auditer)
             forever(::transferer)
         }
