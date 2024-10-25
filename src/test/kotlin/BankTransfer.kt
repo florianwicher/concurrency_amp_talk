@@ -11,6 +11,7 @@ private class BankAccount(
     val accountNumber: Int,
     private var _balance: Int
 ) {
+    @get:Synchronized
     val balance get() = _balance
 
     @Synchronized
