@@ -36,7 +36,7 @@ private class BankAccount(
 class BankTransferTest {
 
     @Test
-    fun `when self-transferring, then money supply is conserved`() {
+    fun `given one account, money supply is conserved`() {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
@@ -64,13 +64,13 @@ class BankTransferTest {
 
     @Test
     @Timeout(1)
-    fun `money supply is conserved after a bunch of transfers between a set of accounts`() {
+    fun `given two accounts, money supply is conserved`() {
         fun randomAmount() = (1..1000).random()
 
         val accounts = List(2) { BankAccount(it, randomAmount()) }
         val moneyInCirculationBefore = accounts.sumOf { it.balance }
 
-        blast(threadCount = 1) {
+        blast(threadCount = 2) {
             val from = accounts.random()
             val to = accounts.random()
             val amount = randomAmount()
