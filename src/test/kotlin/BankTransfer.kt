@@ -28,7 +28,6 @@ private class BankAccount(
         return false
     }
 
-    @Synchronized
     fun transfer(amount: Int, toAccount: BankAccount) {
         if (withdraw(amount)) toAccount.deposit(amount)
     }
