@@ -1,4 +1,7 @@
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit.NANOSECONDS
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
@@ -37,3 +40,6 @@ class Blaster(
 
 fun blast(threadCount: Int = 100, iterationsPerThread: Int = 100_000,
           workload: () -> Unit) = Blaster(threadCount, iterationsPerThread) { workload() }.also { it.run() }
+
+fun ScheduledExecutorService.forever(block: () -> Unit): ScheduledFuture<*> =
+    scheduleAtFixedRate(block, 0, 1, NANOSECONDS)

@@ -70,10 +70,6 @@ class BankTransferTest {
     }
 }
 
-
-fun ScheduledExecutorService.forever(block: () -> Unit): ScheduledFuture<*> =
-    scheduleAtFixedRate(block, 0, 1, NANOSECONDS)
-
 //val (smaller, larger) = listOf(this, toAccount).sortedBy { it.accountNumber }
 //synchronized(smaller) {
 //    synchronized(larger) {
