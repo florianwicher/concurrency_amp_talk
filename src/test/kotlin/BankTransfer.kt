@@ -29,7 +29,7 @@ private class BankAccount(
     }
 
     fun transfer(amount: Int, toAccount: BankAccount) {
-        if (withdraw(amount)) toAccount.deposit(amount)
+                if (withdraw(amount)) toAccount.deposit(amount)
     }
 }
 
@@ -40,16 +40,12 @@ class BankTransferTest {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
-        fun transferer() {
-            account.transfer(1, account)
-        }
+        fun transferer() = account.transfer(1, account)
 
-        fun auditer() {
-            try {
-                assertEquals(100, account.balance)
-            } catch (e: AssertionFailedError) {
-                exception = e
-            }
+        fun auditer() = try {
+            assertEquals(100, account.balance)
+        } catch (e: AssertionFailedError) {
+            exception = e
         }
 
         newScheduledThreadPool(2).apply {
