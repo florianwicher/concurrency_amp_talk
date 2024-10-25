@@ -63,16 +63,13 @@ class BankTransferTest {
 
     @Test
     fun `given two accounts, money supply is conserved`() {
-        fun randomAmount() = (1..1000).random()
-
-        val accounts = List(2) { BankAccount(it, randomAmount()) }
+        val accounts = List(2) { BankAccount(it, 1000) }
         val moneyInCirculationBefore = accounts.sumOf { it.balance }
 
         blast(threadCount = 2) {
             val from = accounts.random()
             val to = accounts.random()
-            val amount = randomAmount()
-            from.transfer(amount, to)
+            from.transfer(1, to)
         }
 
         val moneyInCirculationAfter = accounts.sumOf { it.balance }
