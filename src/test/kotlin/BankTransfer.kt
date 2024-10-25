@@ -1,9 +1,11 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.opentest4j.AssertionFailedError
 import java.lang.Thread.sleep
 import java.util.concurrent.Executors.newScheduledThreadPool
 import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit.NANOSECONDS
 
 private class BankAccount(
@@ -34,7 +36,7 @@ private class BankAccount(
 class BankTransferTest {
 
     @Test
-    fun `given one account, money supply is conserved`() {
+    fun `when transferring, then money supply is conserved`() {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
@@ -61,24 +63,21 @@ class BankTransferTest {
 
 
     @Test
-    fun `given two accounts, money supply is conserved`() {
+    @Timeout(1)
+    fun `when transferring, then does not deadlock`() {
         val accounts = List(2) { BankAccount(it, 1000) }
-        val moneyInCirculationBefore = accounts.sumOf { it.balance }
 
         blast(threadCount = 2) {
             val from = accounts.random()
             val to = accounts.random()
             from.transfer(1, to)
         }
-
-        val moneyInCirculationAfter = accounts.sumOf { it.balance }
-        assertEquals(moneyInCirculationBefore, moneyInCirculationAfter)
     }
-
-
-    fun ScheduledExecutorService.forever(block: () -> Unit) = scheduleAtFixedRate(block, 0, 1, NANOSECONDS)
-
 }
+
+
+fun ScheduledExecutorService.forever(block: () -> Unit): ScheduledFuture<*> =
+    scheduleAtFixedRate(block, 0, 1, NANOSECONDS)
 
 //val (smaller, larger) = listOf(this, toAccount).sortedBy { it.accountNumber }
 //synchronized(smaller) {
