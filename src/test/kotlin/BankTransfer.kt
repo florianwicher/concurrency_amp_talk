@@ -28,6 +28,7 @@ private class BankAccount(
         return false
     }
 
+    @Synchronized
     fun transfer(amount: Int, toAccount: BankAccount) {
         if (withdraw(amount)) toAccount.deposit(amount)
     }
@@ -36,7 +37,7 @@ private class BankAccount(
 class BankTransferTest {
 
     @Test
-    fun `money supply is conserved`() {
+    fun `when self-transferring, then money supply is conserved`() {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
@@ -52,7 +53,7 @@ class BankTransferTest {
             }
         }
 
-        newScheduledThreadPool(1).apply {
+        newScheduledThreadPool(2).apply {
             forever(::auditer)
             forever(::transferer)
         }
