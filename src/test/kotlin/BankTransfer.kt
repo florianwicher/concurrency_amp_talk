@@ -40,17 +40,17 @@ class BankTransferTest {
         val account = BankAccount(1, 100)
         var exception: AssertionFailedError? = null
 
-        fun transferer() = account.transfer(1, account)
+        fun selfTransfer() = account.transfer(1, account)
 
-        fun auditer() = try {
+        fun audit() = try {
             assertEquals(100, account.balance)
         } catch (e: AssertionFailedError) {
             exception = e
         }
 
         newScheduledThreadPool(1).apply {
-            forever(::auditer)
-            forever(::transferer)
+            forever(::audit)
+            forever(::selfTransfer)
         }
 
         sleep(100)
@@ -61,7 +61,7 @@ class BankTransferTest {
     @Test
     @Timeout(1)
     fun `when transferring, then does not deadlock`() {
-        val accounts = List(2) { BankAccount(it, 1000) }
+        val accounts = List(2) { BankAccount(it, 100) }
 
         blast(threadCount = 2) {
             val from = accounts.random()
