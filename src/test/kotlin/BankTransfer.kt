@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit.NANOSECONDS
 
-private class BankAccount(
+class BankAccount(
     val accountNumber: Int,
     private var _balance: Int
 ) {
