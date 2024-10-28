@@ -7,7 +7,7 @@ class Counter {
         }
 
     fun increment() {
-            count++
+        count++
     }
 }
 
